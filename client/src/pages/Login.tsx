@@ -5,20 +5,16 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useEffect } from "react";
 
 const Signup = () => {
-  const navigate = useNavigate();
-  
+  const navigate = useNavigate(); 
   useEffect(() => {
-     supabase.auth.onAuthStateChange((event, session) => {
+      supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         navigate('/');
       } else if (event === 'SIGNED_OUT') {
         navigate('/login');
       }
-      
-      console.log(event, session);
     });
   }, [navigate]);
-  
   return (
     <div className="container">
       <Auth  

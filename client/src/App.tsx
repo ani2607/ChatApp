@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes,Route} from "react-router-dom"
 import { lazy,Suspense } from "react"
 import Loader from "./components/Loader"
+import PrivateRoute from "./hooks/providers/PrivateRoute";
 
 const Home = lazy(()=> import('./pages/Home'))
 
@@ -19,10 +20,12 @@ function App() {
 
       <Routes>
        
-       <Route  path="/" element={<Home />} />
+       <Route  path="/" element={ <PrivateRoute>  <Home /> </PrivateRoute>} />
        <Route  path="/login" element={<Login />} />
-       <Route path="/chat/:chatid" element={<Chat />} />
-       <Route path="/groups" element={<Groups />} />
+       <Route path="/chat/:chatid" element={  <PrivateRoute>
+        <Chat />
+       </PrivateRoute> } />
+       <Route path="/groups" element={ <PrivateRoute> <Groups /> </PrivateRoute> } />
       </Routes>
       </Suspense>
     </Router>
