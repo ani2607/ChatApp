@@ -3,28 +3,56 @@ import { supabase } from "../hooks/supabase/auth";
 import { useNavigate } from "react-router-dom";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useEffect } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { userInfo } from "../recoil/atom/user";
+import { User } from "../types/typeUtils";
 
-const Signup = () => {
+const Login = () => {
   const navigate = useNavigate(); 
+  const setUserInfo = useSetRecoilState<User | null>(userInfo);
+  const info = useRecoilValue(userInfo);
+  console.log(info);
+
   useEffect(() => {
-      supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_IN') {
+    const getUserDetail = async () => {
+      console.log("hi from login page");
+      const result = await supabase.auth.getSession();
+      console.log(result.data.session?.user?.user_metadata);
+      if (result.data.session) {
+        setUserInfo({
+          email: result.data.session.user?.user_metadata.email,
+          id: result.data.session.user?.id,
+          username: result.data.session.user?.user_metadata.name
+        });
+      }
+    };
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log(session)
+      if (session) {
+        getUserDetail();
         navigate('/');
-      } else if (event === 'SIGNED_OUT') {
+      } else {
+        console.log(event);
         navigate('/login');
       }
     });
-  }, [navigate]);
+
+    return () => {
+      authListener?.subscription?.unsubscribe();
+    };
+  }, [navigate, setUserInfo]);
+
   return (
-    <div className="container">
+    <div className="mx-auto mt-20 rounded p-6 w-96 bg-gray-900">
       <Auth  
         supabaseClient={supabase}
-        appearance={{theme : ThemeSupa}}
+        appearance={{ theme: ThemeSupa }}
         theme="dark"
-        providers={["github"]}
+        providers={['google','github']}
       />
     </div>
   );
-}
+};
 
-export default Signup;
+export default Login;
