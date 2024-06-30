@@ -2,7 +2,7 @@
 
 const Profile = () => {
   return (
-    <div>
+    <div className="text-5xl">
       Profile
     </div>
   )

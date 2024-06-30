@@ -4,3 +4,10 @@ export interface User {
     username? : string
 }
 
+export enum CurrentComponent {
+    Home = 'Home',
+    Notification ='Notification',
+    Profile = 'Profile',
+    Group = 'Group',
+    Search = 'Search'
+}
